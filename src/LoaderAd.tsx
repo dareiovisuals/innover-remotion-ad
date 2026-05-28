@@ -562,50 +562,56 @@ export const LoaderAd: React.FC = () => {
           }}>
 
             {/* Combined Clip 1 & 2a & 2b Layout (Kinetic Centered Stack) */}
-            {c12Visible && (
-               <div style={{ position: "absolute", inset: 0, display: "flex", alignItems: "center", justifyContent: "center", pointerEvents: "none" }}>
-                 {opacityElevating > 0 && (
-                   <span 
-                     className="intro-clip-text" 
-                     style={{ 
-                       transform: `translateX(${xElevating}px) translateY(${yElevating}px) scale(${scaleElevating})`,
-                       opacity: opacityElevating,
-                       position: "absolute",
-                       color: "#ffffff",
-                       willChange: "transform, opacity"
-                     }}
-                   >
-                     Elevating
-                   </span>
-                 )}
-                 {opacityCorporate > 0 && (
-                   <span 
-                     className="intro-clip-text intro-gradient-text" 
-                     style={{ 
-                       transform: `translateX(${xCorporate}px) translateY(${yCorporate}px) scale(${scaleCorporate})`,
-                       opacity: opacityCorporate,
-                       position: "absolute",
-                       willChange: "transform, opacity"
-                     }}
-                   >
-                     Corporate
-                   </span>
-                 )}
-                 {opacityVirtual > 0 && (
-                   <span 
-                     className="intro-clip-text intro-gradient-text" 
-                     style={{ 
-                       transform: `translateX(${xVirtual}px) translateY(${yVirtual}px) scale(${scaleVirtual})`,
-                       opacity: opacityVirtual,
-                       position: "absolute",
-                       willChange: "transform, opacity"
-                     }}
-                   >
-                     Virtual Events
-                   </span>
-                 )}
-               </div>
-            )}
+             {c12Visible && (
+                <div className="intro-left-container">
+                  {opacityElevating > 0 && (
+                    <span 
+                      className="intro-clip-text" 
+                      style={{ 
+                        transform: `translateX(${xElevating}px) translateY(${yElevating}px) scale(${scaleElevating})`,
+                        opacity: opacityElevating,
+                        position: "absolute",
+                        left: 0,
+                        color: "#ffffff",
+                        willChange: "transform, opacity",
+                        transformOrigin: "left center"
+                      }}
+                    >
+                      Elevating
+                    </span>
+                  )}
+                  {opacityCorporate > 0 && (
+                    <span 
+                      className="intro-clip-text intro-gradient-text" 
+                      style={{ 
+                        transform: `translateX(${xCorporate}px) translateY(${yCorporate}px) scale(${scaleCorporate})`,
+                        opacity: opacityCorporate,
+                        position: "absolute",
+                        left: 0,
+                        willChange: "transform, opacity",
+                        transformOrigin: "left center"
+                      }}
+                    >
+                      Corporate
+                    </span>
+                  )}
+                  {opacityVirtual > 0 && (
+                    <span 
+                      className="intro-clip-text intro-gradient-text" 
+                      style={{ 
+                        transform: `translateX(${xVirtual}px) translateY(${yVirtual}px) scale(${scaleVirtual})`,
+                        opacity: opacityVirtual,
+                        position: "absolute",
+                        left: 0,
+                        willChange: "transform, opacity",
+                        transformOrigin: "left center"
+                      }}
+                    >
+                      Virtual Events
+                    </span>
+                  )}
+                </div>
+             )}
 
              {/* Clip 3: Achieving your Business Goals (2-Phrase Kinetic Transition) */}
              {c3Visible && (
