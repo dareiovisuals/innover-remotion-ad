@@ -483,8 +483,25 @@ export const LoaderAd: React.FC = () => {
   const activeWordmarkWidth = wordmarkWidth;
   const activeWordmarkOpacity = wordmarkOpacity;
 
+  // Dynamic background opacity transition: transparent -> solid #0B162C -> transparent
+  let bgOpacity = 0;
+  if (frame >= 260 && frame < 280) {
+    bgOpacity = clamp((frame - 260) / 20);
+  } else if (frame >= 280 && frame < 367) {
+    bgOpacity = 1.0;
+  } else if (frame >= 367 && frame < 395) {
+    bgOpacity = clamp(1.0 - (frame - 367) / 28);
+  } else {
+    bgOpacity = 0;
+  }
+
   return (
-    <div className="loader-container">
+    <div 
+      className="loader-container"
+      style={{
+        backgroundColor: `rgba(11, 22, 44, ${bgOpacity})`
+      }}
+    >
       
       {/* Pre-wired Audio (Plays music.WAV placed in the public folder) */}
       <Audio src={staticFile("music.WAV")} volume={0.8} />
