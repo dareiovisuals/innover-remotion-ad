@@ -212,48 +212,110 @@ export const LoaderAd: React.FC = () => {
     }
   }
 
-  // ── CLIP 3: 2-PHRASE KINETIC TYPOGRAPHY DYNAMICS (F160 - F280) ──
+  // ── CLIP 3: FLEX-ROW WORD-BY-WORD PUSH (F160 - F280) ──
+  // FIX: "Achieving" and "your" live in a flex row so CSS handles spacing — no overlap possible.
+  // rowX drives the WHOLE ROW's horizontal position (offset from its centered anchor).
+  // xYourSlide animates "your" sliding INTO the flex row from the right.
   const fC3 = frame;
   const c3Visible = fC3 >= 160 && fC3 < 280;
 
-  let opacityPart1 = 0;
-  let scalePart1 = 0.85;
+  // Whole-row position (offset FROM the naturally-centered anchor of the flex row)
+  // 0 = centered on screen. Negative = shifts left.
+  let rowX = 0;
+
+  // "Achieving" word
+  let opacityAchieving = 0;
+  let scaleAchieving = 1.0;
+  let yAchieving = 0;
+
+  // "your" word — slides in via translateX WITHIN the flex row
+  // starts at a large positive value (off-screen right) and goes to 0 (natural flex position)
+  let opacityYour = 0;
+  let xYourSlide = 500; // starts far right, off screen
+  let scaleYour = 1.0;
+
+  // "Business Goals."
   let opacityPart2 = 0;
-  let scalePart2 = 0.85;
+  let scalePart2 = 1.5;
+  let xPart2 = 0;
+  let yPart2 = 0;
 
   if (c3Visible) {
-    // Part 1: "Achieving your" (F160 - F220)
-    if (fC3 < 220) {
-      const f1 = fC3 - 160;
-      if (f1 < 15) {
-        const t = easeSnap(clamp(f1 / 15));
-        opacityPart1 = t;
-        scalePart1 = 0.85 + 0.35 * t;
-      } else if (f1 < 45) {
-        opacityPart1 = 1.0;
-        scalePart1 = 1.2;
-      } else {
-        const t = easeExit(clamp((f1 - 45) / 15));
-        opacityPart1 = clamp(1.0 - t);
-        scalePart1 = 1.2 - 0.35 * t;
-      }
+    const f3 = fC3 - 160;
+
+    // Phase 1a ─ "Achieving" enters alone, centered on screen (f3: 0–20)
+    if (f3 < 20) {
+      const t = easeSnap(clamp(f3 / 20));
+      opacityAchieving = t;
+      scaleAchieving = 0.7 + 0.3 * t; // 0.7 → 1.0
+      yAchieving = 25 * (1 - t);       // slides up
+      rowX = 0;                         // centered
+      xYourSlide = 500;                 // "your" off-screen right
+      opacityYour = 0;
     }
 
-    // Part 2: "Business Goals." (F220 - F280)
-    if (fC3 >= 220) {
-      const f2 = fC3 - 220;
-      if (f2 < 15) {
-        const t = easeSnap(clamp(f2 / 15));
-        opacityPart2 = t;
-        scalePart2 = 0.85 + 0.35 * t;
-      } else if (f2 < 45) {
-        opacityPart2 = 1.0;
-        scalePart2 = 1.2;
-      } else {
-        const t = easeExit(clamp((f2 - 45) / 15));
-        opacityPart2 = clamp(1.0 - t);
-        scalePart2 = 1.2 - 0.35 * t;
-      }
+    // Phase 1b ─ "your" slides into the flex row; row shifts left (the push) (f3: 20–48)
+    if (f3 >= 20 && f3 < 48) {
+      const t = easeSnap(clamp((f3 - 20) / 28));
+
+      opacityAchieving = 1.0;
+      scaleAchieving = 1.0;
+      yAchieving = 0;
+
+      // Row shifts left as "your" pushes in — ends up left-aligned in the viewport
+      rowX = -120 * t; // 0 → -120 (shifts the whole pair left)
+
+      opacityYour = easeSnap(t);
+      scaleYour = 0.7 + 0.3 * t;       // 0.7 → 1.0
+      xYourSlide = 500 * (1 - t);       // 500 → 0 (slides into natural flex position)
+    }
+
+    // Phase 1c ─ "Achieving your" holds together (f3: 48–62)
+    if (f3 >= 48 && f3 < 62) {
+      opacityAchieving = 1.0; scaleAchieving = 1.0; yAchieving = 0;
+      opacityYour = 1.0;      scaleYour = 1.0;      xYourSlide = 0;
+      rowX = -120;
+    }
+
+    // Phase 2 ─ Whole row exits LEFT; "Business Goals." enters BIG from right (f3: 62–87)
+    if (f3 >= 62 && f3 < 87) {
+      const t = easeSnap(clamp((f3 - 62) / 25));
+
+      // Entire row slides further left and fades
+      const rowExit = clamp(1.0 - t);
+      opacityAchieving = rowExit;
+      opacityYour      = rowExit;
+      scaleAchieving   = 1.0 - 0.35 * t;
+      scaleYour        = 1.0 - 0.35 * t;
+      yAchieving       = 0;
+      xYourSlide       = 0;
+      rowX             = -120 - 400 * t; // exits left off screen
+
+      // "Business Goals." zooms in BIG from right, settles at scale 1.0
+      opacityPart2 = easeSnap(t);
+      scalePart2   = 1.5 - 0.5 * t;     // 1.5 → 1.0
+      xPart2       = 400 * (1 - t);      // slides from right to x=0
+      yPart2       = 0;
+    }
+
+    // Phase 3 ─ "Business Goals." holds, gentle zoom-out settle (f3: 87–107)
+    if (f3 >= 87 && f3 < 107) {
+      opacityAchieving = 0; opacityYour = 0;
+      const tSettle = clamp((f3 - 87) / 20);
+      opacityPart2 = 1.0;
+      scalePart2   = 1.0 - 0.08 * tSettle; // 1.0 → 0.92
+      xPart2       = 0;
+      yPart2       = 0;
+    }
+
+    // Phase 4 ─ "Business Goals." exits (f3: 107–120)
+    if (f3 >= 107) {
+      const t = easeExit(clamp((f3 - 107) / 13));
+      opacityAchieving = 0; opacityYour = 0;
+      opacityPart2 = clamp(1.0 - t);
+      scalePart2   = 0.92 - 0.22 * t;
+      yPart2       = -30 * t;
+      xPart2       = 0;
     }
   }
 
@@ -615,32 +677,74 @@ export const LoaderAd: React.FC = () => {
 
              {/* Clip 3: Achieving your Business Goals (2-Phrase Kinetic Transition) */}
              {c3Visible && (
-               <div style={{ position: "absolute", inset: 0, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: "1.2rem" }}>
-                 {opacityPart1 > 0 && (
-                   <span 
-                     className="intro-clip-text" 
-                     style={{ 
-                       transform: `scale(${scalePart1})`,
-                       opacity: opacityPart1,
-                       color: "#ffffff",
-                       willChange: "transform, opacity"
+               <div style={{ position: "absolute", inset: 0, display: "flex", alignItems: "center", justifyContent: "center", pointerEvents: "none" }}>
+
+                 {/* "Achieving your" — flex ROW so CSS handles word spacing, zero overlap possible */}
+                 {(opacityAchieving > 0 || opacityYour > 0) && (
+                   <div
+                     style={{
+                       display: "flex",
+                       flexDirection: "row",
+                       alignItems: "center",
+                       gap: "0.75em",
+                       whiteSpace: "nowrap",
+                       transform: `translateX(${rowX}px)`,
+                       willChange: "transform"
                      }}
                    >
-                     Achieving your
-                   </span>
+                     {/* Word 1: "Achieving" */}
+                     <span
+                       className="intro-clip-text"
+                       style={{
+                         display: "inline-block",
+                         opacity: opacityAchieving,
+                         transform: `translateY(${yAchieving}px) scale(${scaleAchieving})`,
+                         color: "#ffffff",
+                         willChange: "transform, opacity",
+                         transformOrigin: "center center"
+                       }}
+                     >
+                       Achieving
+                     </span>
+                     {/* Word 2: "your" — slides in from the right via its own translateX */}
+                     <span
+                       className="intro-clip-text"
+                       style={{
+                         display: "inline-block",
+                         opacity: opacityYour,
+                         transform: `translateX(${xYourSlide}px) scale(${scaleYour})`,
+                         color: "#ffffff",
+                         willChange: "transform, opacity",
+                         transformOrigin: "center center"
+                       }}
+                     >
+                       your
+                     </span>
+                   </div>
                  )}
+
+                 {/* "Business Goals." — left-aligned inside intro-left-container */}
                  {opacityPart2 > 0 && (
-                   <span 
-                     className="intro-clip-text intro-gradient-text" 
-                     style={{ 
-                       transform: `scale(${scalePart2})`,
-                       opacity: opacityPart2,
-                       willChange: "transform, opacity"
-                     }}
+                   <div
+                     className="intro-left-container"
+                     style={{ pointerEvents: "none" }}
                    >
-                     Business Goals.
-                   </span>
+                     <span
+                       className="intro-clip-text intro-gradient-text"
+                       style={{
+                         transform: `translateX(${xPart2}px) translateY(${yPart2}px) scale(${scalePart2})`,
+                         opacity: opacityPart2,
+                         position: "absolute",
+                         left: 0,
+                         willChange: "transform, opacity",
+                         transformOrigin: "left center"
+                       }}
+                     >
+                       Business Goals.
+                     </span>
+                   </div>
                  )}
+
                </div>
              )}
 
