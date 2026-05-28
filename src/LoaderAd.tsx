@@ -703,7 +703,7 @@ export const LoaderAd: React.FC = () => {
                         opacity: opacityElevating,
                         position: "absolute",
                         left: 0,
-                        color: "#ffffff",
+                        color: "#FAD928",
                         willChange: "transform, opacity",
                         transformOrigin: "left center"
                       }}
@@ -719,6 +719,10 @@ export const LoaderAd: React.FC = () => {
                         opacity: opacityCorporate,
                         position: "absolute",
                         left: 0,
+                        background: "linear-gradient(to right, #1E4ED8 0%, #F8FAFC 100%)",
+                        WebkitBackgroundClip: "text",
+                        WebkitTextFillColor: "transparent",
+                        backgroundClip: "text",
                         willChange: "transform, opacity",
                         transformOrigin: "left center"
                       }}
@@ -769,7 +773,7 @@ export const LoaderAd: React.FC = () => {
                          display: "inline-block",
                          opacity: opacityAchieving,
                          transform: `translateY(${yAchieving}px) scale(${scaleAchieving})`,
-                         color: "#ffffff",
+                         color: "#FAD928",
                          willChange: "transform, opacity",
                          transformOrigin: "center center"
                        }}
@@ -783,7 +787,7 @@ export const LoaderAd: React.FC = () => {
                          display: "inline-block",
                          opacity: opacityYour,
                          transform: `translateX(${xYourSlide}px) scale(${scaleYour})`,
-                         color: "#ffffff",
+                         color: "#FAD928",
                          willChange: "transform, opacity",
                          transformOrigin: "center center"
                        }}
@@ -904,7 +908,7 @@ export const LoaderAd: React.FC = () => {
                           display: "inline-block",
                           opacity: opacityLets,
                           transform: `translateY(${yLets}px) scale(${scaleLets})`,
-                          color: "#ffffff",
+                          color: "#FAD928",
                           willChange: "transform, opacity",
                           transformOrigin: "center center"
                         }}
@@ -918,7 +922,7 @@ export const LoaderAd: React.FC = () => {
                           display: "inline-block",
                           opacity: opacityBring,
                           transform: `translateX(${xBringSlide}px) scale(${scaleBring})`,
-                          color: "#ffffff",
+                          color: "#F8FAFC",
                           willChange: "transform, opacity",
                           transformOrigin: "center center"
                         }}
