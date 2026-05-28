@@ -302,7 +302,7 @@ export const LoaderAd: React.FC = () => {
 
       opacityBusiness = t;
       scaleBusiness   = 1.3 - 0.3 * t;     // 1.3 → 1.0
-      row2X           = 150 + 250 * (1 - t); // slides from right to +150
+      row2X           = 320 + 230 * (1 - t); // slides from right to +320
     }
 
     // Phase 2b ─ "Business" holds, "Goals." enters BIG from right smoothly (f3: 80–98)
@@ -312,28 +312,28 @@ export const LoaderAd: React.FC = () => {
       opacityBusiness = 1.0;
       scaleBusiness = 1.0;
       
-      // Row shifts left to accommodate "Goals."
-      row2X = 150 * (1 - t); // 150 → 0
+      // Row drifts slowly left to maintain push momentum
+      row2X = 320 - 60 * t; // 320 → 260
       
       opacityGoals = t;
       scaleGoals = 1.3 - 0.3 * t; // 1.3 → 1.0
-      xGoalsSlide = 300 * (1 - t); // slides from right
+      xGoalsSlide = 250 * (1 - t); // slides from right
     }
 
-    // Phase 3 ─ Both hold, gentle zoom-out settle (f3: 98–110)
-    if (f3 >= 98 && f3 < 110) {
-      const tSettle = clamp((f3 - 98) / 12);
+    // Phase 3 ─ Slide from offset (+260) to center (0), gentle zoom-out settle (f3: 98–112)
+    if (f3 >= 98 && f3 < 112) {
+      const tSettle = easeStandard(clamp((f3 - 98) / 14));
       opacityBusiness = 1.0; scaleBusiness = 1.0;
       opacityGoals = 1.0; scaleGoals = 1.0;
       xGoalsSlide = 0;
-      row2X = 0;
+      row2X = 260 * (1 - tSettle); // 260 → 0
       
       row2Scale = 1.0 - 0.1 * tSettle; // 1.0 → 0.9
     }
 
-    // Phase 4 ─ "Business Goals." exits (f3: 110–120)
-    if (f3 >= 110) {
-      const t = easeExit(clamp((f3 - 110) / 10));
+    // Phase 4 ─ "Business Goals." exits (f3: 112–120)
+    if (f3 >= 112) {
+      const t = easeExit(clamp((f3 - 112) / 8));
       
       opacityBusiness = clamp(1.0 - t);
       opacityGoals = clamp(1.0 - t);
