@@ -161,54 +161,91 @@ export const LoaderAd: React.FC = () => {
   // ── COMBINED CLIP 5 & 6 DYNAMICS (F305 - F440) ──
   const c56Visible = frame >= 305 && frame < 440;
 
+  let opacityLets = 0;
+  let scaleLets = 1.0;
+  let yLets = 0;
+
   let opacityBring = 0;
   let scaleBring = 1.0;
-  let xBring = 0;
-  let yBring = -22;
+  let xBringSlide = 500;
+
+  let rowX5 = 0;
 
   let opacityVision = 0;
   let scaleVision = 1.0;
   let xVision = 0;
-  let yVision = 22;
+  let yVision = 0;
 
   if (c56Visible) {
     const fC56 = frame - 305;
 
-    // Line 1 ("Let's Bring your") enters F305 - F320 (15 frames)
-    if (fC56 < 15) {
-      const t = easeSnap(clamp(fC56 / 15));
-      opacityBring = t;
-      scaleBring = 0.5 + 0.5 * t; // zoom in from 0.5 -> 1.0
-      xBring = 80 * (1 - t);
-    } else if (frame < 425) {
-      opacityBring = 1.0;
-      scaleBring = 1.0;
-    } else {
-      // exit F425 - F440: zooms out smaller (1.0 -> 0.6) and fades
-      const t = easeExit(clamp((frame - 425) / 15));
-      opacityBring = clamp(1.0 - t);
-      scaleBring = 1.0 - 0.4 * t;
-      yBring = -22 - 30 * t;
+    // Phase 1a ─ "Let's" enters alone with a smooth standard pop-out (fC56: 0–20)
+    if (fC56 < 20) {
+      const t = easeStandard(clamp(fC56 / 20));
+      opacityLets = t;
+      scaleLets = 0.5 + 0.5 * t; // smooth scale from 0.5 to 1.0
+      yLets = 30 * (1 - t);       // slides up smoothly
+      rowX5 = 0;
+      opacityBring = 0;
+      xBringSlide = 500;
     }
 
-    // Line 2 ("Vision to Life") enters staggered: 50% through Line 1's entrance (8 frames delay, starting F313)
-    const fVision = fC56 - 8;
+    // Phase 1b ─ "Bring your" slides in from right, row shifts left (fC56: 20–48)
+    if (fC56 >= 20 && fC56 < 48) {
+      const t = easeSnap(clamp((fC56 - 20) / 28));
+
+      opacityLets = 1.0;
+      scaleLets = 1.0;
+      yLets = 0;
+
+      rowX5 = -120 * t; // shift top row left
+
+      opacityBring = easeSnap(t);
+      scaleBring = 0.7 + 0.3 * t;
+      xBringSlide = 500 * (1 - t); // slide from right
+    }
+
+    // Phase 1c ─ Keep top row holding visible after its entrance is complete (fC56 >= 48)
+    if (fC56 >= 48) {
+      opacityLets = 1.0;
+      scaleLets = 1.0;
+      yLets = 0;
+      opacityBring = 1.0;
+      scaleBring = 1.0;
+      xBringSlide = 0;
+      rowX5 = -120;
+    }
+
+    // Line 2 ("Vision to Life") enters staggered (starting fC56: 48)
+    const fVision = fC56 - 48;
     if (fVision >= 0) {
-      if (fVision < 15) {
-        const t = easeSnap(clamp(fVision / 15));
+      if (fVision < 22) {
+        const t = easeSnap(clamp(fVision / 22));
         opacityVision = t;
-        scaleVision = 0.5 + 0.5 * t; // zoom in from 0.5 -> 1.0
+        scaleVision = 0.5 + 0.5 * t;
         xVision = 80 * (1 - t);
-      } else if (frame < 425) {
+      } else {
         opacityVision = 1.0;
         scaleVision = 1.0;
-      } else {
-        // exit F425 - F440: zooms out smaller (1.0 -> 0.6) and fades
-        const t = easeExit(clamp((frame - 425) / 15));
-        opacityVision = clamp(1.0 - t);
-        scaleVision = 1.0 - 0.4 * t;
-        yVision = 22 + 30 * t;
+        xVision = 0;
       }
+    }
+
+    // Combined exit zoom-out and fade (fC56 >= 120)
+    if (fC56 >= 120) {
+      const t = easeExit(clamp((fC56 - 120) / 15));
+      opacityLets = clamp(1.0 - t);
+      opacityBring = clamp(1.0 - t);
+      opacityVision = clamp(1.0 - t);
+
+      scaleLets = 1.0 - 0.4 * t;
+      scaleBring = 1.0 - 0.4 * t;
+      scaleVision = 1.0 - 0.4 * t;
+
+      yLets = -30 * t;
+      xBringSlide = 0;
+      rowX5 = -120;
+      yVision = 30 * t;
     }
   }
 
@@ -249,12 +286,12 @@ export const LoaderAd: React.FC = () => {
   if (c3Visible) {
     const f3 = fC3 - 160;
 
-    // Phase 1a ─ "Achieving" enters alone, centered on screen (f3: 0–20)
+    // Phase 1a ─ "Achieving" enters alone with a smooth standard pop-out (f3: 0–20)
     if (f3 < 20) {
-      const t = easeSnap(clamp(f3 / 20));
+      const t = easeStandard(clamp(f3 / 20));
       opacityAchieving = t;
-      scaleAchieving = 0.7 + 0.3 * t; // 0.7 → 1.0
-      yAchieving = 25 * (1 - t);       // slides up
+      scaleAchieving = 0.5 + 0.5 * t; // smooth scale from 0.5 to 1.0
+      yAchieving = 30 * (1 - t);       // slides up smoothly
       rowX = 0;                         // centered
       xYourSlide = 500;                 // "your" off-screen right
       opacityYour = 0;
@@ -343,7 +380,7 @@ export const LoaderAd: React.FC = () => {
   }
 
   // Standalone reveals
-  const c4 = clipReveal(280, 25);   // "Results Matter"
+  const c4 = clipReveal(280, 35);   // "Results Matter"
 
   // ── NATIVE TIMINGS SHIFTED BY 450 FRAMES (7.5s) to clear 6-clip intro ──
   
@@ -804,7 +841,7 @@ export const LoaderAd: React.FC = () => {
                     position: "absolute"
                   }}
                 >
-                  <span className="intro-clip-text" style={{ transform: `translateY(${c4.y}%)` }}>
+                  <span className="intro-clip-text" style={{ transform: `translateY(${c4.y}%)`, fontSize: "4.8rem" }}>
                     Results Matter
                   </span>
                 </div>
@@ -813,20 +850,54 @@ export const LoaderAd: React.FC = () => {
              {/* Combined Clip 5 & 6 Layout (Kinetic Centered Stack) */}
              {c56Visible && (
                 <div className="intro-left-container">
-                  {opacityBring > 0 && (
-                    <span 
-                      className="intro-clip-text" 
-                      style={{ 
-                        transform: `translateX(${xBring}px) translateY(${yBring}px) scale(${scaleBring})`,
-                        opacity: opacityBring,
+                  
+                  {/* Top Line: "Let's Bring your" — flex ROW to match Clip 3's gap and kinetics */}
+                  {(opacityLets > 0 || opacityBring > 0) && (
+                    <div
+                      style={{
                         position: "absolute",
-                        color: "#ffffff",
-                        willChange: "transform, opacity"
+                        top: 10,
+                        left: 0,
+                        display: "flex",
+                        flexDirection: "row",
+                        alignItems: "center",
+                        gap: "0.75em", // EXACT same gap as Achieving your!
+                        whiteSpace: "nowrap",
+                        transform: `translateX(${rowX5}px)`,
+                        willChange: "transform"
                       }}
                     >
-                      Let's Bring your
-                    </span>
+                      {/* Word 1: "Let's" */}
+                      <span
+                        className="intro-clip-text"
+                        style={{
+                          display: "inline-block",
+                          opacity: opacityLets,
+                          transform: `translateY(${yLets}px) scale(${scaleLets})`,
+                          color: "#ffffff",
+                          willChange: "transform, opacity",
+                          transformOrigin: "center center"
+                        }}
+                      >
+                        Let's
+                      </span>
+                      {/* Word 2: "Bring your" */}
+                      <span
+                        className="intro-clip-text"
+                        style={{
+                          display: "inline-block",
+                          opacity: opacityBring,
+                          transform: `translateX(${xBringSlide}px) scale(${scaleBring})`,
+                          color: "#ffffff",
+                          willChange: "transform, opacity",
+                          transformOrigin: "center center"
+                        }}
+                      >
+                        Bring your
+                      </span>
+                    </div>
                   )}
+
                   {opacityVision > 0 && (
                     <span 
                       className="intro-clip-text intro-gradient-text" 
@@ -834,7 +905,10 @@ export const LoaderAd: React.FC = () => {
                         transform: `translateX(${xVision}px) translateY(${yVision}px) scale(${scaleVision})`,
                         opacity: opacityVision,
                         position: "absolute",
-                        willChange: "transform, opacity"
+                        left: 0,
+                        top: 60,
+                        willChange: "transform, opacity",
+                        transformOrigin: "left center"
                       }}
                     >
                       Vision to Life
