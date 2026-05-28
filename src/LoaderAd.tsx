@@ -111,11 +111,11 @@ export const LoaderAd: React.FC = () => {
       // Elevating is completely gone
       opacityElevating = 0;
 
-      // Corporate moves to the top line, shrinks to 0.8, and fades to 70% opacity
+      // Corporate moves to the top line, shrinks to 0.5, and fades to 70% opacity
       opacityCorporate = 1.0 - 0.3 * t;
-      scaleCorporate = 1.0 - 0.2 * t;
+      scaleCorporate = 1.0 - 0.5 * t;
       xCorporate = 0;
-      yCorporate = -24 * t;
+      yCorporate = -40 * t;
 
       // Virtual Events zooms in at bottom line (24px)
       opacityVirtual = t;
@@ -128,11 +128,11 @@ export const LoaderAd: React.FC = () => {
     if (fC12 >= 100 && fC12 < 145) {
       opacityElevating = 0;
 
-      // Corporate is held smaller and semi-transparent to shift focus to Virtual Events
+      // Corporate is held smaller (50% zoom out) and semi-transparent to shift focus to Virtual Events
       opacityCorporate = 0.7;
-      scaleCorporate = 0.8;
+      scaleCorporate = 0.5;
       xCorporate = 0;
-      yCorporate = -24;
+      yCorporate = -40;
 
       opacityVirtual = 1.0;
       scaleVirtual = 1.0;
@@ -147,13 +147,13 @@ export const LoaderAd: React.FC = () => {
       opacityElevating = 0;
 
       opacityCorporate = 0.7 * clamp(1.0 - t);
-      scaleCorporate = 0.8 - 0.2 * t;
-      yCorporate = -24 - 40 * t;
+      scaleCorporate = 0.5 - 0.15 * t;
+      yCorporate = -40 - 60 * t;
       xCorporate = 0;
 
       opacityVirtual = clamp(1.0 - t);
       scaleVirtual = 1.0 - 0.3 * t;
-      yVirtual = 24 + 40 * t;
+      yVirtual = 24 + 60 * t;
       xVirtual = 0;
     }
   }
@@ -569,7 +569,7 @@ export const LoaderAd: React.FC = () => {
                 style={{
                   strokeDasharray: `${L1} ${L1}`,
                   strokeDashoffset: strokeDashoffset1,
-                  fill: "#ffffff",
+                  fill: "#F8FAFC",
                   fillOpacity: fillOpacity,
                   strokeWidth: strokeWidth,
                   stroke: "#FAD928"
@@ -582,7 +582,7 @@ export const LoaderAd: React.FC = () => {
                 style={{
                   strokeDasharray: `${L2} ${L2}`,
                   strokeDashoffset: strokeDashoffset2,
-                  fill: "#ffffff",
+                  fill: "#F8FAFC",
                   fillOpacity: fillOpacity,
                   strokeWidth: strokeWidth,
                   stroke: "#FAD928"
@@ -711,7 +711,7 @@ export const LoaderAd: React.FC = () => {
 
             {/* Combined Clip 1 & 2a & 2b Layout (Kinetic Centered Stack) */}
              {c12Visible && (
-                <div className="intro-left-container">
+                <div className="intro-left-container" style={{ left: "42%" }}>
                   {opacityElevating > 0 && (
                     <span 
                       className="intro-clip-text" 
@@ -720,6 +720,7 @@ export const LoaderAd: React.FC = () => {
                         opacity: opacityElevating,
                         position: "absolute",
                         left: 0,
+                        textAlign: "left",
                         color: "#FAD928",
                         willChange: "transform, opacity",
                         transformOrigin: "left center"
@@ -736,7 +737,9 @@ export const LoaderAd: React.FC = () => {
                         opacity: opacityCorporate,
                         position: "absolute",
                         left: 0,
-                        background: "linear-gradient(to right, #1E4ED8 0%, #F8FAFC 100%)",
+                        textAlign: "left",
+                        fontSize: "6.4rem",
+                        backgroundImage: "linear-gradient(to right, #1E4ED8 0%, #F8FAFC 100%)",
                         WebkitBackgroundClip: "text",
                         WebkitTextFillColor: "transparent",
                         backgroundClip: "text",
@@ -755,6 +758,8 @@ export const LoaderAd: React.FC = () => {
                         opacity: opacityVirtual,
                         position: "absolute",
                         left: 0,
+                        textAlign: "left",
+                        fontSize: "6.4rem",
                         willChange: "transform, opacity",
                         transformOrigin: "left center"
                       }}
@@ -804,7 +809,7 @@ export const LoaderAd: React.FC = () => {
                          display: "inline-block",
                          opacity: opacityYour,
                          transform: `translateX(${xYourSlide}px) scale(${scaleYour})`,
-                         color: "#FAD928",
+                         color: "#F8FAFC",
                          willChange: "transform, opacity",
                          transformOrigin: "center center"
                        }}
@@ -836,7 +841,7 @@ export const LoaderAd: React.FC = () => {
                           display: "inline-block",
                           opacity: opacityBusiness,
                           transform: `scale(${scaleBusiness})`,
-                          background: "linear-gradient(to right, #1E4ED8 0%, #FAD928 100%)",
+                          backgroundImage: "linear-gradient(to right, #1E4ED8 0%, #FAD928 100%)",
                           WebkitBackgroundClip: "text",
                           WebkitTextFillColor: "transparent",
                           backgroundClip: "text",
@@ -854,7 +859,7 @@ export const LoaderAd: React.FC = () => {
                           display: "inline-block",
                           opacity: opacityGoals,
                           transform: `translateX(${xGoalsSlide}px) scale(${scaleGoals})`,
-                          background: "linear-gradient(to right, #FAD928 0%, #F8FAFC 100%)",
+                          backgroundImage: "linear-gradient(to right, #FAD928 0%, #F8FAFC 100%)",
                           WebkitBackgroundClip: "text",
                           WebkitTextFillColor: "transparent",
                           backgroundClip: "text",
@@ -925,7 +930,7 @@ export const LoaderAd: React.FC = () => {
                           display: "inline-block",
                           opacity: opacityLets,
                           transform: `translateY(${yLets}px) scale(${scaleLets})`,
-                          color: "#FAD928",
+                          color: "#F8FAFC",
                           willChange: "transform, opacity",
                           transformOrigin: "center center"
                         }}
