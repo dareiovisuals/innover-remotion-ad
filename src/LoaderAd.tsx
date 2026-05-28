@@ -283,10 +283,10 @@ export const LoaderAd: React.FC = () => {
       rowX = -120;
     }
 
-    // ─ EXTREMELY SMOOTH EXIT for "Achieving your" (f3: 62–97) ─
+    // ─ EXTREMELY SMOOTH EXIT for "Achieving your" (f3: 62–90) ─
     if (f3 >= 62) {
       // Use easeStandard (starts slow, ends slow) and extend duration for a gentle drift out
-      const tOut = easeStandard(clamp((f3 - 62) / 35));
+      const tOut = easeStandard(clamp((f3 - 62) / 28));
       opacityAchieving = clamp(1.0 - tOut);
       opacityYour      = clamp(1.0 - tOut);
       scaleAchieving   = 1.0 - 0.1 * tOut; // very gentle scale down
@@ -296,53 +296,49 @@ export const LoaderAd: React.FC = () => {
       xYourSlide       = 0;
     }
 
-    // Phase 2a ─ "Business" enters BIG from right smoothly (f3: 62–80)
-    if (f3 >= 62 && f3 < 80) {
-      const t = easeStandard(clamp((f3 - 62) / 18));
+    // Parallel entrance ─ "Business" enters (62-80), "Goals." enters staggered at 50% (71-89)
+    if (f3 >= 62) {
+      // 1. Business Word Animation (starts at 62, duration 18 frames)
+      const tBus = clamp((f3 - 62) / 18);
+      const easeBus = easeStandard(tBus);
+      opacityBusiness = easeBus;
+      scaleBusiness = 1.3 - 0.3 * easeBus;
 
-      opacityBusiness = t;
-      scaleBusiness   = 1.3 - 0.3 * t;     // 1.3 → 1.0
-      row2X           = 320 + 230 * (1 - t); // slides from right to +320
-    }
+      // 2. Goals Word Animation (starts at 71, duration 18 frames)
+      const fGoals = f3 - 71;
+      if (fGoals >= 0) {
+        const tG = clamp(fGoals / 18);
+        const easeG = easeStandard(tG);
+        opacityGoals = easeG;
+        scaleGoals = 1.3 - 0.3 * easeG;
+        xGoalsSlide = 250 * (1 - easeG);
+      } else {
+        opacityGoals = 0;
+        scaleGoals = 1.3;
+        xGoalsSlide = 250;
+      }
 
-    // Phase 2b ─ "Business" holds, "Goals." enters BIG from right smoothly (f3: 80–98)
-    if (f3 >= 80 && f3 < 98) {
-      const t = easeStandard(clamp((f3 - 80) / 18));
-      
-      opacityBusiness = 1.0;
-      scaleBusiness = 1.0;
-      
-      // Row drifts slowly left to maintain push momentum
-      row2X = 320 - 60 * t; // 320 → 260
-      
-      opacityGoals = t;
-      scaleGoals = 1.3 - 0.3 * t; // 1.3 → 1.0
-      xGoalsSlide = 250 * (1 - t); // slides from right
-    }
+      // 3. Unified Push Slide to Middle (starts at 62, centered by 89)
+      const tRow = clamp((f3 - 62) / 27);
+      row2X = 300 * (1 - easeStandard(tRow));
 
-    // Phase 3 ─ Slide from offset (+260) to center (0), gentle zoom-out settle (f3: 98–112)
-    if (f3 >= 98 && f3 < 112) {
-      const tSettle = easeStandard(clamp((f3 - 98) / 14));
-      opacityBusiness = 1.0; scaleBusiness = 1.0;
-      opacityGoals = 1.0; scaleGoals = 1.0;
-      xGoalsSlide = 0;
-      row2X = 260 * (1 - tSettle); // 260 → 0
-      
-      row2Scale = 1.0 - 0.1 * tSettle; // 1.0 → 0.9
-    }
+      // 4. Static Hold at 100% scale (starts at 89, stays steady until 105)
+      if (f3 >= 89 && f3 < 105) {
+        row2Scale = 1.0; // perfectly steady at full scale
+      }
 
-    // Phase 4 ─ "Business Goals." exits (f3: 112–120)
-    if (f3 >= 112) {
-      const t = easeExit(clamp((f3 - 112) / 8));
-      
-      opacityBusiness = clamp(1.0 - t);
-      opacityGoals = clamp(1.0 - t);
-      scaleBusiness = 1.0; scaleGoals = 1.0;
-      xGoalsSlide = 0;
-      row2X = 0;
-
-      row2Scale = 0.9 - 0.2 * t; // 0.9 → 0.7
-      row2Y = -30 * t;
+      // 5. Single Unified Exit Zoom-out & Fade (starts at 105, exits fully by 120 - 15 frames duration)
+      if (f3 >= 105) {
+        const t = easeExit(clamp((f3 - 105) / 15));
+        opacityBusiness = clamp(1.0 - t);
+        opacityGoals = clamp(1.0 - t);
+        scaleBusiness = 1.0; 
+        scaleGoals = 1.0;
+        xGoalsSlide = 0;
+        row2X = 0;
+        row2Scale = 1.0 - 0.3 * t; // one smooth transition from 1.0 -> 0.7
+        row2Y = -30 * t;
+      }
     }
   }
 
@@ -759,7 +755,7 @@ export const LoaderAd: React.FC = () => {
                        display: "flex",
                        flexDirection: "row",
                        alignItems: "center",
-                       gap: "0.4em",
+                       gap: "1em",
                        whiteSpace: "nowrap",
                        transform: `translateX(${row2X}px) translateY(${row2Y}px) scale(${row2Scale})`,
                        willChange: "transform"
