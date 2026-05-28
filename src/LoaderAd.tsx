@@ -173,7 +173,8 @@ export const LoaderAd: React.FC = () => {
 
   let opacityVision = 0;
   let scaleVision = 1.0;
-  let xVision = 0;
+  let rowXVision = 300;
+  let rowScale5 = 1.0;
   let yVision = 0;
 
   if (c56Visible) {
@@ -205,47 +206,51 @@ export const LoaderAd: React.FC = () => {
       xBringSlide = 500 * (1 - t); // slide from right
     }
 
-    // Phase 1c ─ Keep top row holding visible after its entrance is complete (fC56 >= 48)
-    if (fC56 >= 48) {
-      opacityLets = 1.0;
-      scaleLets = 1.0;
+    // Phase 1c ─ Hold top row together (fC56: 48–62)
+    if (fC56 >= 48 && fC56 < 62) {
+      opacityLets = 1.0; scaleLets = 1.0; yLets = 0;
+      opacityBring = 1.0; scaleBring = 1.0; xBringSlide = 0;
+      rowX5 = -120;
+    }
+
+    // ─ EXTREMELY SMOOTH EXIT for "Let's Bring your" (fC56: 62–90) ─
+    if (fC56 >= 62) {
+      const tOut5 = easeStandard(clamp((fC56 - 62) / 28));
+      opacityLets = clamp(1.0 - tOut5);
+      opacityBring = clamp(1.0 - tOut5);
+      scaleLets = 1.0 - 0.1 * tOut5;
+      scaleBring = 1.0 - 0.1 * tOut5;
+      rowX5 = -120 - 100 * tOut5; // drift left
       yLets = 0;
-      opacityBring = 1.0;
-      scaleBring = 1.0;
       xBringSlide = 0;
-      rowX5 = -120;
     }
 
-    // Line 2 ("Vision to Life") enters staggered (starting fC56: 48)
-    const fVision = fC56 - 48;
-    if (fVision >= 0) {
-      if (fVision < 22) {
-        const t = easeSnap(clamp(fVision / 22));
-        opacityVision = t;
-        scaleVision = 0.5 + 0.5 * t;
-        xVision = 80 * (1 - t);
-      } else {
-        opacityVision = 1.0;
-        scaleVision = 1.0;
-        xVision = 0;
-      }
+    // Phase 2 ─ "Vision to Life" enters BIG and slides directly to the middle (fC56: 62–80)
+    if (fC56 >= 62 && fC56 < 80) {
+      const t = easeStandard(clamp((fC56 - 62) / 18));
+      opacityVision = t;
+      scaleVision = 1.3 - 0.3 * t; // 1.3 → 1.0
+      rowXVision = 300 * (1 - t);   // slides directly to the middle (0)
+      yVision = 0;
     }
 
-    // Combined exit zoom-out and fade (fC56 >= 120)
-    if (fC56 >= 120) {
-      const t = easeExit(clamp((fC56 - 120) / 15));
-      opacityLets = clamp(1.0 - t);
-      opacityBring = clamp(1.0 - t);
+    // Phase 3 ─ "Vision to Life" holds centered, static hold at 100% scale (fC56: 80–115)
+    if (fC56 >= 80 && fC56 < 115) {
+      opacityVision = 1.0;
+      scaleVision = 1.0;
+      rowXVision = 0;
+      rowScale5 = 1.0;
+      yVision = 0;
+    }
+
+    // Phase 4 ─ Single Unified Exit Zoom-out & Fade (fC56: 115–135)
+    if (fC56 >= 115) {
+      const t = easeExit(clamp((fC56 - 115) / 20));
       opacityVision = clamp(1.0 - t);
-
-      scaleLets = 1.0 - 0.4 * t;
-      scaleBring = 1.0 - 0.4 * t;
-      scaleVision = 1.0 - 0.4 * t;
-
-      yLets = -30 * t;
-      xBringSlide = 0;
-      rowX5 = -120;
-      yVision = 30 * t;
+      scaleVision = 1.0;
+      rowXVision = 0;
+      rowScale5 = 1.0 - 0.3 * t; // smooth transition from 1.0 -> 0.7
+      yVision = -30 * t;
     }
   }
 
@@ -849,15 +854,13 @@ export const LoaderAd: React.FC = () => {
 
              {/* Combined Clip 5 & 6 Layout (Kinetic Centered Stack) */}
              {c56Visible && (
-                <div className="intro-left-container">
+               <div style={{ position: "absolute", inset: 0, display: "flex", alignItems: "center", justifyContent: "center", pointerEvents: "none" }}>
                   
                   {/* Top Line: "Let's Bring your" — flex ROW to match Clip 3's gap and kinetics */}
                   {(opacityLets > 0 || opacityBring > 0) && (
                     <div
                       style={{
                         position: "absolute",
-                        top: 10,
-                        left: 0,
                         display: "flex",
                         flexDirection: "row",
                         alignItems: "center",
@@ -902,13 +905,13 @@ export const LoaderAd: React.FC = () => {
                     <span 
                       className="intro-clip-text intro-gradient-text" 
                       style={{ 
-                        transform: `translateX(${xVision}px) translateY(${yVision}px) scale(${scaleVision})`,
+                        fontSize: "4.8rem", // 50% bigger to match Business Goals!
+                        transform: `translateX(${rowXVision}px) translateY(${yVision}px) scale(${scaleVision * rowScale5})`,
                         opacity: opacityVision,
                         position: "absolute",
-                        left: 0,
-                        top: 60,
+                        whiteSpace: "nowrap",
                         willChange: "transform, opacity",
-                        transformOrigin: "left center"
+                        transformOrigin: "center center"
                       }}
                     >
                       Vision to Life
