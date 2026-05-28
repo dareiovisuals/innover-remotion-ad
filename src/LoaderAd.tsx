@@ -104,16 +104,16 @@ export const LoaderAd: React.FC = () => {
       yCorporate = 0;
     }
 
-    // 3. Virtual Events entrance & Corporate moves to stack (F75 - F100)
+    // 3. Virtual Events entrance & Corporate moves to stack with focus shift (F75 - F100)
     if (fC12 >= 75 && fC12 < 100) {
       const t = easeSnap(clamp((fC12 - 75) / 25));
 
       // Elevating is completely gone
       opacityElevating = 0;
 
-      // Corporate moves to the top line (-24px)
-      opacityCorporate = 1.0;
-      scaleCorporate = 1.0;
+      // Corporate moves to the top line, shrinks to 0.8, and fades to 70% opacity
+      opacityCorporate = 1.0 - 0.3 * t;
+      scaleCorporate = 1.0 - 0.2 * t;
       xCorporate = 0;
       yCorporate = -24 * t;
 
@@ -128,8 +128,9 @@ export const LoaderAd: React.FC = () => {
     if (fC12 >= 100 && fC12 < 145) {
       opacityElevating = 0;
 
-      opacityCorporate = 1.0;
-      scaleCorporate = 1.0;
+      // Corporate is held smaller and semi-transparent to shift focus to Virtual Events
+      opacityCorporate = 0.7;
+      scaleCorporate = 0.8;
       xCorporate = 0;
       yCorporate = -24;
 
@@ -145,8 +146,8 @@ export const LoaderAd: React.FC = () => {
 
       opacityElevating = 0;
 
-      opacityCorporate = clamp(1.0 - t);
-      scaleCorporate = 1.0 - 0.3 * t;
+      opacityCorporate = 0.7 * clamp(1.0 - t);
+      scaleCorporate = 0.8 - 0.2 * t;
       yCorporate = -24 - 40 * t;
       xCorporate = 0;
 
