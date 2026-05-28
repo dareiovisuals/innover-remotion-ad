@@ -1,0 +1,146 @@
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800;900&family=Manrope:wght@300;400;500;600;700;800&display=swap');
+
+.loader-container {
+  background-color: transparent;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Manrope', sans-serif;
+  overflow: hidden;
+  position: relative;
+}
+
+/* ── Inner column: aligns all rows ── */
+.loader-inner {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  width: 310px;
+}
+
+/* ── Lockup: flex row ── */
+.loader-lockup {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  transform-origin: center center;
+}
+
+/* ── SVG icon ── */
+.loader-icon {
+  flex-shrink: 0;
+}
+
+.loader-icon svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+  overflow: visible;
+}
+
+/* Paths */
+.li-p1, .li-p2 {
+  fill: transparent;
+  stroke: #ffffff;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+/* ── Wordmark ── */
+.loader-wordmark {
+  overflow: hidden;
+}
+
+.loader-wordmark svg {
+  height: auto;
+  display: block;
+}
+
+.loader-wordmark path {
+  fill: #ffffff;
+}
+
+/* ── Tags ── */
+.loader-tag {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  overflow: hidden;
+}
+
+.loader-tag-line {
+  height: 1px;
+  flex: 1;
+  background: rgba(255, 255, 255, 0.28);
+}
+
+.loader-label {
+  font-family: 'Outfit', sans-serif;
+  font-size: 1.4rem;
+  font-weight: 400;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: #ffffff;
+  white-space: nowrap;
+}
+
+/* ── Bottom sweep line ── */
+.loader-line {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  height: 1px;
+  background: linear-gradient(to right, transparent, rgba(255, 255, 255, 0.3), transparent);
+}
+
+/* ── 6-Clip Zelios-Style Kinetic Typography Intro ── */
+/* overflow:hidden mask creates the editorial clip reveal effect. */
+.intro-clip-mask {
+  overflow: hidden;
+  line-height: 1;
+  padding: 0.08em 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* All phrases: Outfit Bold, full white, responsive and legible. */
+.intro-clip-text {
+  display: block;
+  font-family: 'Outfit', sans-serif;
+  font-size: 3.2rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  margin-right: -0.02em; /* mathematically centers the text */
+  color: #ffffff;
+  text-align: center;
+  white-space: nowrap;
+  will-change: transform;
+}
+
+/* Premium Text Gradient: Vibrant Blue to Brand Gold */
+.intro-gradient-text {
+  background: linear-gradient(to right, #2e8bff 0%, #fad928 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Centered container for left-aligned intro text stack */
+.intro-left-container {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start; /* perfectly align all text to the left! */
+  justify-content: center;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%); /* perfectly centers the group in the viewport */
+  width: 460px; /* generous width to fit longest phrases on one line */
+  height: 120px;
+  overflow: visible;
+}
