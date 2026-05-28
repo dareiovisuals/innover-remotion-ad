@@ -191,9 +191,9 @@ export const LoaderAd: React.FC = () => {
       xBringSlide = 500;
     }
 
-    // Phase 1b ─ "Bring your" slides in from right, row shifts left (fC56: 20–48)
-    if (fC56 >= 20 && fC56 < 48) {
-      const t = easeSnap(clamp((fC56 - 20) / 28));
+    // Phase 1b ─ "Bring your" slides in from right (duration 22 frames = 0.75s, fC56: 20–42)
+    if (fC56 >= 20 && fC56 < 42) {
+      const t = easeSnap(clamp((fC56 - 20) / 22));
 
       opacityLets = 1.0;
       scaleLets = 1.0;
@@ -206,10 +206,14 @@ export const LoaderAd: React.FC = () => {
       xBringSlide = 500 * (1 - t); // slide from right
     }
 
-    // Phase 1c ─ Hold top row together (fC56: 48–62)
-    if (fC56 >= 48 && fC56 < 62) {
-      opacityLets = 1.0; scaleLets = 1.0; yLets = 0;
-      opacityBring = 1.0; scaleBring = 1.0; xBringSlide = 0;
+    // Phase 1c ─ Keep top row holding visible after its entrance is complete (fC56 >= 42)
+    if (fC56 >= 42) {
+      opacityLets = 1.0;
+      scaleLets = 1.0;
+      yLets = 0;
+      opacityBring = 1.0;
+      scaleBring = 1.0;
+      xBringSlide = 0;
       rowX5 = -120;
     }
 
@@ -225,17 +229,17 @@ export const LoaderAd: React.FC = () => {
       xBringSlide = 0;
     }
 
-    // Phase 2 ─ "Vision to Life" enters BIG and slides directly to the middle (fC56: 62–80)
-    if (fC56 >= 62 && fC56 < 80) {
-      const t = easeStandard(clamp((fC56 - 62) / 18));
+    // Phase 2 ─ "Vision to Life" enters BIG and slides DIRECTLY to the middle (duration 22 frames = 0.75s, fC56: 70–92)
+    if (fC56 >= 70 && fC56 < 92) {
+      const t = easeStandard(clamp((fC56 - 70) / 22));
       opacityVision = t;
       scaleVision = 1.3 - 0.3 * t; // 1.3 → 1.0
-      rowXVision = 300 * (1 - t);   // slides directly to the middle (0)
+      rowXVision = 300 * (1 - t);   // slides directly to the middle (0px) in a single unified push
       yVision = 0;
     }
 
-    // Phase 3 ─ "Vision to Life" holds centered, static hold at 100% scale (fC56: 80–115)
-    if (fC56 >= 80 && fC56 < 115) {
+    // Phase 3 ─ Hold centered perfectly stable (fC56: 92–120)
+    if (fC56 >= 92 && fC56 < 120) {
       opacityVision = 1.0;
       scaleVision = 1.0;
       rowXVision = 0;
@@ -243,13 +247,13 @@ export const LoaderAd: React.FC = () => {
       yVision = 0;
     }
 
-    // Phase 4 ─ Single Unified Exit Zoom-out & Fade (fC56: 115–135)
-    if (fC56 >= 115) {
-      const t = easeExit(clamp((fC56 - 115) / 20));
+    // Phase 4 ─ Single Unified Exit Zoom-out & Fade (fC56: 120–135)
+    if (fC56 >= 120) {
+      const t = easeExit(clamp((fC56 - 120) / 15));
       opacityVision = clamp(1.0 - t);
       scaleVision = 1.0;
       rowXVision = 0;
-      rowScale5 = 1.0 - 0.3 * t; // smooth transition from 1.0 -> 0.7
+      rowScale5 = 1.0 - 0.3 * t; // smooth zoom out from 1.0 -> 0.7
       yVision = -30 * t;
     }
   }
@@ -789,50 +793,58 @@ export const LoaderAd: React.FC = () => {
                    </div>
                  )}
 
-                 {/* Phrase 2: "Business Goals." — flex ROW */}
-                 {(opacityBusiness > 0 || opacityGoals > 0) && (
-                   <div
-                     style={{
-                       position: "absolute",
-                       display: "flex",
-                       flexDirection: "row",
-                       alignItems: "center",
-                       gap: "1em",
-                       whiteSpace: "nowrap",
-                       transform: `translateX(${row2X}px) translateY(${row2Y}px) scale(${row2Scale})`,
-                       willChange: "transform"
-                     }}
-                   >
-                     {/* Word 1: "Business" */}
-                     <span
-                       className="intro-clip-text intro-gradient-text"
-                       style={{
-                         fontSize: "4.8rem", // 30% larger base size
-                         display: "inline-block",
-                         opacity: opacityBusiness,
-                         transform: `scale(${scaleBusiness})`,
-                         willChange: "transform, opacity",
-                         transformOrigin: "center center"
-                       }}
-                     >
-                       Business
-                     </span>
-                     {/* Word 2: "Goals." */}
-                     <span
-                       className="intro-clip-text intro-gradient-text"
-                       style={{
-                         fontSize: "4.8rem", // 30% larger base size
-                         display: "inline-block",
-                         opacity: opacityGoals,
-                         transform: `translateX(${xGoalsSlide}px) scale(${scaleGoals})`,
-                         willChange: "transform, opacity",
-                         transformOrigin: "center center"
-                       }}
-                     >
-                       Goals.
-                     </span>
-                   </div>
-                 )}
+                 {/* Phrase 2: "Business Goals." — flex ROW with a single unified gradient */}
+                  {(opacityBusiness > 0 || opacityGoals > 0) && (
+                    <div
+                      style={{
+                        position: "absolute",
+                        display: "flex",
+                        flexDirection: "row",
+                        alignItems: "center",
+                        gap: "1em",
+                        whiteSpace: "nowrap",
+                        transform: `translateX(${row2X}px) translateY(${row2Y}px) scale(${row2Scale})`,
+                        willChange: "transform"
+                      }}
+                    >
+                      {/* Word 1: "Business" — transitions from Blue to Yellow */}
+                      <span
+                        className="intro-clip-text"
+                        style={{
+                          fontSize: "4.8rem",
+                          display: "inline-block",
+                          opacity: opacityBusiness,
+                          transform: `scale(${scaleBusiness})`,
+                          background: "linear-gradient(to right, #1E4ED8 0%, #FAD928 100%)",
+                          WebkitBackgroundClip: "text",
+                          WebkitTextFillColor: "transparent",
+                          backgroundClip: "text",
+                          willChange: "transform, opacity",
+                          transformOrigin: "center center"
+                        }}
+                      >
+                        Business
+                      </span>
+                      {/* Word 2: "Goals." — transitions from Yellow to White */}
+                      <span
+                        className="intro-clip-text"
+                        style={{
+                          fontSize: "4.8rem",
+                          display: "inline-block",
+                          opacity: opacityGoals,
+                          transform: `translateX(${xGoalsSlide}px) scale(${scaleGoals})`,
+                          background: "linear-gradient(to right, #FAD928 0%, #F8FAFC 100%)",
+                          WebkitBackgroundClip: "text",
+                          WebkitTextFillColor: "transparent",
+                          backgroundClip: "text",
+                          willChange: "transform, opacity",
+                          transformOrigin: "center center"
+                        }}
+                      >
+                        Goals.
+                      </span>
+                    </div>
+                  )}
 
                </div>
              )}
@@ -846,9 +858,24 @@ export const LoaderAd: React.FC = () => {
                     position: "absolute"
                   }}
                 >
-                  <span className="intro-clip-text" style={{ transform: `translateY(${c4.y}%)`, fontSize: "4.8rem" }}>
-                    Results Matter
-                  </span>
+                  <div
+                    style={{
+                      display: "flex",
+                      flexDirection: "row",
+                      alignItems: "center",
+                      gap: "0.22em",
+                      transform: `translateY(${c4.y}%)`,
+                      fontSize: "4.8rem",
+                      willChange: "transform"
+                    }}
+                  >
+                    <span className="intro-clip-text" style={{ color: "#FAD928" }}>
+                      Results
+                    </span>
+                    <span className="intro-clip-text" style={{ color: "#F8FAFC" }}>
+                      Matter
+                    </span>
+                  </div>
                 </div>
              )}
 
