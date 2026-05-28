@@ -765,7 +765,7 @@ export const LoaderAd: React.FC = () => {
                      <span
                        className="intro-clip-text intro-gradient-text"
                        style={{
-                         fontSize: "4.1rem", // 30% larger base size
+                         fontSize: "4.8rem", // 30% larger base size
                          display: "inline-block",
                          opacity: opacityBusiness,
                          transform: `scale(${scaleBusiness})`,
@@ -779,7 +779,7 @@ export const LoaderAd: React.FC = () => {
                      <span
                        className="intro-clip-text intro-gradient-text"
                        style={{
-                         fontSize: "4.1rem", // 30% larger base size
+                         fontSize: "4.8rem", // 30% larger base size
                          display: "inline-block",
                          opacity: opacityGoals,
                          transform: `translateX(${xGoalsSlide}px) scale(${scaleGoals})`,
