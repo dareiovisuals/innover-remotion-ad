@@ -234,11 +234,17 @@ export const LoaderAd: React.FC = () => {
   let xYourSlide = 500; // starts far right, off screen
   let scaleYour = 1.0;
 
-  // "Business Goals."
-  let opacityPart2 = 0;
-  let scalePart2 = 1.5;
-  let xPart2 = 0;
-  let yPart2 = 0;
+  // Phrase 2: "Business Goals."
+  let opacityBusiness = 0;
+  let scaleBusiness = 1.0; // Will use fontSize 4.1rem for the 30% increase natively
+  
+  let opacityGoals = 0;
+  let scaleGoals = 1.0; 
+  let xGoalsSlide = 400;
+
+  let row2X = 0;
+  let row2Y = 0;
+  let row2Scale = 1.0;
 
   if (c3Visible) {
     const f3 = fC3 - 160;
@@ -277,45 +283,66 @@ export const LoaderAd: React.FC = () => {
       rowX = -120;
     }
 
-    // Phase 2 ─ Whole row exits LEFT; "Business Goals." enters BIG from right (f3: 62–87)
-    if (f3 >= 62 && f3 < 87) {
-      const t = easeSnap(clamp((f3 - 62) / 25));
-
-      // Entire row slides further left and fades
-      const rowExit = clamp(1.0 - t);
-      opacityAchieving = rowExit;
-      opacityYour      = rowExit;
-      scaleAchieving   = 1.0 - 0.35 * t;
-      scaleYour        = 1.0 - 0.35 * t;
+    // ─ EXTREMELY SMOOTH EXIT for "Achieving your" (f3: 62–97) ─
+    if (f3 >= 62) {
+      // Use easeStandard (starts slow, ends slow) and extend duration for a gentle drift out
+      const tOut = easeStandard(clamp((f3 - 62) / 35));
+      opacityAchieving = clamp(1.0 - tOut);
+      opacityYour      = clamp(1.0 - tOut);
+      scaleAchieving   = 1.0 - 0.1 * tOut; // very gentle scale down
+      scaleYour        = 1.0 - 0.1 * tOut;
+      rowX             = -120 - 100 * tOut; // short, slow drift left
       yAchieving       = 0;
       xYourSlide       = 0;
-      rowX             = -120 - 400 * t; // exits left off screen
-
-      // "Business Goals." zooms in BIG from right, settles at scale 1.0
-      opacityPart2 = easeSnap(t);
-      scalePart2   = 1.5 - 0.5 * t;     // 1.5 → 1.0
-      xPart2       = 400 * (1 - t);      // slides from right to x=0
-      yPart2       = 0;
     }
 
-    // Phase 3 ─ "Business Goals." holds, gentle zoom-out settle (f3: 87–107)
-    if (f3 >= 87 && f3 < 107) {
-      opacityAchieving = 0; opacityYour = 0;
-      const tSettle = clamp((f3 - 87) / 20);
-      opacityPart2 = 1.0;
-      scalePart2   = 1.0 - 0.08 * tSettle; // 1.0 → 0.92
-      xPart2       = 0;
-      yPart2       = 0;
+    // Phase 2a ─ "Business" enters BIG from right (f3: 62–78)
+    if (f3 >= 62 && f3 < 78) {
+      const t = easeSnap(clamp((f3 - 62) / 16));
+
+      opacityBusiness = easeSnap(t);
+      scaleBusiness   = 1.5 - 0.5 * t;     // 1.5 → 1.0
+      row2X           = 120 + 300 * (1 - t); // slides from right to +120 (centered ignoring Goals)
     }
 
-    // Phase 4 ─ "Business Goals." exits (f3: 107–120)
-    if (f3 >= 107) {
-      const t = easeExit(clamp((f3 - 107) / 13));
-      opacityAchieving = 0; opacityYour = 0;
-      opacityPart2 = clamp(1.0 - t);
-      scalePart2   = 0.92 - 0.22 * t;
-      yPart2       = -30 * t;
-      xPart2       = 0;
+    // Phase 2b ─ "Business" holds, "Goals." enters BIG from right (f3: 78–95)
+    if (f3 >= 78 && f3 < 95) {
+      const t = easeSnap(clamp((f3 - 78) / 17));
+      
+      opacityBusiness = 1.0;
+      scaleBusiness = 1.0;
+      
+      // Row shifts left to accommodate "Goals."
+      row2X = 120 * (1 - t); // 120 → 0
+      
+      opacityGoals = easeSnap(t);
+      scaleGoals = 1.5 - 0.5 * t; // 1.5 → 1.0
+      xGoalsSlide = 400 * (1 - t); // slides from right
+    }
+
+    // Phase 3 ─ Both hold, gentle zoom-out settle (f3: 95–108)
+    if (f3 >= 95 && f3 < 108) {
+      const tSettle = clamp((f3 - 95) / 13);
+      opacityBusiness = 1.0; scaleBusiness = 1.0;
+      opacityGoals = 1.0; scaleGoals = 1.0;
+      xGoalsSlide = 0;
+      row2X = 0;
+      
+      row2Scale = 1.0 - 0.1 * tSettle; // 1.0 → 0.9
+    }
+
+    // Phase 4 ─ "Business Goals." exits (f3: 108–120)
+    if (f3 >= 108) {
+      const t = easeExit(clamp((f3 - 108) / 12));
+      
+      opacityBusiness = clamp(1.0 - t);
+      opacityGoals = clamp(1.0 - t);
+      scaleBusiness = 1.0; scaleGoals = 1.0;
+      xGoalsSlide = 0;
+      row2X = 0;
+
+      row2Scale = 0.9 - 0.2 * t; // 0.9 → 0.7
+      row2Y = -30 * t;
     }
   }
 
@@ -683,6 +710,7 @@ export const LoaderAd: React.FC = () => {
                  {(opacityAchieving > 0 || opacityYour > 0) && (
                    <div
                      style={{
+                       position: "absolute",
                        display: "flex",
                        flexDirection: "row",
                        alignItems: "center",
@@ -723,24 +751,47 @@ export const LoaderAd: React.FC = () => {
                    </div>
                  )}
 
-                 {/* "Business Goals." — left-aligned inside intro-left-container */}
-                 {opacityPart2 > 0 && (
+                 {/* Phrase 2: "Business Goals." — flex ROW */}
+                 {(opacityBusiness > 0 || opacityGoals > 0) && (
                    <div
-                     className="intro-left-container"
-                     style={{ pointerEvents: "none" }}
+                     style={{
+                       position: "absolute",
+                       display: "flex",
+                       flexDirection: "row",
+                       alignItems: "center",
+                       gap: "0.4em",
+                       whiteSpace: "nowrap",
+                       transform: `translateX(${row2X}px) translateY(${row2Y}px) scale(${row2Scale})`,
+                       willChange: "transform"
+                     }}
                    >
+                     {/* Word 1: "Business" */}
                      <span
                        className="intro-clip-text intro-gradient-text"
                        style={{
-                         transform: `translateX(${xPart2}px) translateY(${yPart2}px) scale(${scalePart2})`,
-                         opacity: opacityPart2,
-                         position: "absolute",
-                         left: 0,
+                         fontSize: "4.1rem", // 30% larger base size
+                         display: "inline-block",
+                         opacity: opacityBusiness,
+                         transform: `scale(${scaleBusiness})`,
                          willChange: "transform, opacity",
-                         transformOrigin: "left center"
+                         transformOrigin: "center center"
                        }}
                      >
-                       Business Goals.
+                       Business
+                     </span>
+                     {/* Word 2: "Goals." */}
+                     <span
+                       className="intro-clip-text intro-gradient-text"
+                       style={{
+                         fontSize: "4.1rem", // 30% larger base size
+                         display: "inline-block",
+                         opacity: opacityGoals,
+                         transform: `translateX(${xGoalsSlide}px) scale(${scaleGoals})`,
+                         willChange: "transform, opacity",
+                         transformOrigin: "center center"
+                       }}
+                     >
+                       Goals.
                      </span>
                    </div>
                  )}
