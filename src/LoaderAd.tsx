@@ -296,33 +296,33 @@ export const LoaderAd: React.FC = () => {
       xYourSlide       = 0;
     }
 
-    // Phase 2a ─ "Business" enters BIG from right (f3: 62–78)
-    if (f3 >= 62 && f3 < 78) {
-      const t = easeSnap(clamp((f3 - 62) / 16));
+    // Phase 2a ─ "Business" enters BIG from right smoothly (f3: 62–80)
+    if (f3 >= 62 && f3 < 80) {
+      const t = easeStandard(clamp((f3 - 62) / 18));
 
-      opacityBusiness = easeSnap(t);
-      scaleBusiness   = 1.5 - 0.5 * t;     // 1.5 → 1.0
-      row2X           = 120 + 300 * (1 - t); // slides from right to +120 (centered ignoring Goals)
+      opacityBusiness = t;
+      scaleBusiness   = 1.3 - 0.3 * t;     // 1.3 → 1.0
+      row2X           = 150 + 250 * (1 - t); // slides from right to +150
     }
 
-    // Phase 2b ─ "Business" holds, "Goals." enters BIG from right (f3: 78–95)
-    if (f3 >= 78 && f3 < 95) {
-      const t = easeSnap(clamp((f3 - 78) / 17));
+    // Phase 2b ─ "Business" holds, "Goals." enters BIG from right smoothly (f3: 80–98)
+    if (f3 >= 80 && f3 < 98) {
+      const t = easeStandard(clamp((f3 - 80) / 18));
       
       opacityBusiness = 1.0;
       scaleBusiness = 1.0;
       
       // Row shifts left to accommodate "Goals."
-      row2X = 120 * (1 - t); // 120 → 0
+      row2X = 150 * (1 - t); // 150 → 0
       
-      opacityGoals = easeSnap(t);
-      scaleGoals = 1.5 - 0.5 * t; // 1.5 → 1.0
-      xGoalsSlide = 400 * (1 - t); // slides from right
+      opacityGoals = t;
+      scaleGoals = 1.3 - 0.3 * t; // 1.3 → 1.0
+      xGoalsSlide = 300 * (1 - t); // slides from right
     }
 
-    // Phase 3 ─ Both hold, gentle zoom-out settle (f3: 95–108)
-    if (f3 >= 95 && f3 < 108) {
-      const tSettle = clamp((f3 - 95) / 13);
+    // Phase 3 ─ Both hold, gentle zoom-out settle (f3: 98–110)
+    if (f3 >= 98 && f3 < 110) {
+      const tSettle = clamp((f3 - 98) / 12);
       opacityBusiness = 1.0; scaleBusiness = 1.0;
       opacityGoals = 1.0; scaleGoals = 1.0;
       xGoalsSlide = 0;
@@ -331,9 +331,9 @@ export const LoaderAd: React.FC = () => {
       row2Scale = 1.0 - 0.1 * tSettle; // 1.0 → 0.9
     }
 
-    // Phase 4 ─ "Business Goals." exits (f3: 108–120)
-    if (f3 >= 108) {
-      const t = easeExit(clamp((f3 - 108) / 12));
+    // Phase 4 ─ "Business Goals." exits (f3: 110–120)
+    if (f3 >= 110) {
+      const t = easeExit(clamp((f3 - 110) / 10));
       
       opacityBusiness = clamp(1.0 - t);
       opacityGoals = clamp(1.0 - t);
