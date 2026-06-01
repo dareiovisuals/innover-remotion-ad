@@ -506,15 +506,7 @@ export const LoaderAd: React.FC = () => {
       {/* Pre-wired Audio (Plays music.WAV placed in the public folder) */}
       <Audio src={staticFile("music.WAV")} volume={0.8} />
       
-      {/* Background Radial Glow */}
-      <div 
-        style={{
-          position: "absolute",
-          inset: 0,
-          background: "radial-gradient(circle, rgba(255, 255, 255, 0.02) 0%, rgba(6, 10, 22, 0) 70%)",
-          pointerEvents: "none"
-        }}
-      />
+
 
       {/* Main Lockup Wrapper */}
       <div 
@@ -721,6 +713,7 @@ export const LoaderAd: React.FC = () => {
                         position: "absolute",
                         left: 0,
                         textAlign: "left",
+                        fontSize: "4.8rem",
                         color: "#FAD928",
                         willChange: "transform, opacity",
                         transformOrigin: "left center"
@@ -760,6 +753,10 @@ export const LoaderAd: React.FC = () => {
                         left: 0,
                         textAlign: "left",
                         fontSize: "6.4rem",
+                        backgroundImage: "linear-gradient(to right, #FAD928 0%, #F8FAFC 100%)",
+                        WebkitBackgroundClip: "text",
+                        WebkitTextFillColor: "transparent",
+                        backgroundClip: "text",
                         willChange: "transform, opacity",
                         transformOrigin: "left center"
                       }}
@@ -867,7 +864,7 @@ export const LoaderAd: React.FC = () => {
                           transformOrigin: "center center"
                         }}
                       >
-                        Goals.
+                        Goals
                       </span>
                     </div>
                   )}
